@@ -339,7 +339,7 @@
       const completed = my.filter(r => { const e = ev.find(x => x.id == r.eid); return e && e.date < t; });
       const hr = new Date().getHours();
       const greet = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
-      $('p-sdash').innerHTML = `<h3 class="ttl mb-1">${greet}, ${esc(s.name)}! 👋</h3><p class="text-muted mb-4">Here's what's happening with your events.</p><div class="row g-3 mb-4">
+      $('p-sdash').innerHTML = `<h3 class="ttl mb-1">${greet}, ${esc(s.name)}! &#x1F44B;</h3><p class="text-muted mb-4">Here's what's happening with your events.</p><div class="row g-3 mb-4">
  <div class="col-6 col-lg-3"><div class="stat bg-primary"><small>My Registrations</small><h2>${my.length}</h2></div></div>
  <div class="col-6 col-lg-3"><div class="stat bg-success"><small>Upcoming</small><h2>${upcoming.length}</h2></div></div>
  <div class="col-6 col-lg-3"><div class="stat" style="background:#f59e0b"><small>Completed</small><h2>${completed.length}</h2></div></div>
