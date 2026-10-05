@@ -409,8 +409,13 @@
 
     async function saveEv(ev) {
       ev.preventDefault();
+      if (window._evSaveInProgress) return;
+      window._evSaveInProgress = true;
+      const finish = () => { window._evSaveInProgress = false; };
+
       const name = $('ef-n').value.trim(), cat = $('ef-c').value, date = $('ef-d').value, time = $('ef-t').value, max = +$('ef-x').value, venue = $('ef-v').value.trim(), org = $('ef-o').value.trim(), desc = $('ef-ds').value.trim();
-      if (!name || !date || !time || !venue || !org || !desc || max < 1) return toast('Please fill all fields correctly.', 'danger');
+      if (!name || !date || !time || !venue || !org || !desc || max < 1) { toast('Please fill all fields correctly.', 'danger'); return finish(); }
+      
       const id = +$('ef-id').value;
       const e = id ? EV().find(x => x.id == id) : null;
       let img = $('ef-i').value.trim();
@@ -424,11 +429,13 @@
         reader.onload = async function(evt) {
           d.img = evt.target.result;
           await _doSaveEv(d, id, e);
+          finish();
         };
         reader.readAsDataURL(file);
       } else {
         d.img = img;
         await _doSaveEv(d, id, e);
+        finish();
       }
     }
     // Fix #19: More explicit delete confirmation
@@ -505,9 +512,9 @@
     function setupRealtime() {
       if (!_supabase || _realtimeChannel) return;
       _realtimeChannel = _supabase.channel('college-event-live')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, p => { if (p.eventType === 'INSERT') EV_DATA.push(p.new); else if (p.eventType === 'UPDATE') { const i = EV_DATA.findIndex(x => String(x.id) === String(p.new.id)); if (i >= 0) EV_DATA[i] = p.new; else EV_DATA.push(p.new) } else if (p.eventType === 'DELETE') EV_DATA = EV_DATA.filter(x => String(x.id) !== String(p.old.id)); refreshLiveView() })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, p => { if (p.eventType === 'INSERT') RG_DATA.push(p.new); else if (p.eventType === 'UPDATE') { const i = RG_DATA.findIndex(x => String(x.id) === String(p.new.id)); if (i >= 0) RG_DATA[i] = p.new; else RG_DATA.push(p.new) } else if (p.eventType === 'DELETE') RG_DATA = RG_DATA.filter(x => String(x.id) !== String(p.old.id)); refreshLiveView() })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'students' }, p => { if (p.eventType === 'INSERT') SL_DATA.push(p.new); else if (p.eventType === 'UPDATE') { const i = SL_DATA.findIndex(x => String(x.sid) === String(p.new.sid)); if (i >= 0) SL_DATA[i] = p.new; else SL_DATA.push(p.new) } else if (p.eventType === 'DELETE') SL_DATA = SL_DATA.filter(x => String(x.sid) !== String(p.old.sid)); refreshLiveView() })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, p => { if (p.eventType === 'INSERT') { if (!EV_DATA.find(x => String(x.id) === String(p.new.id))) EV_DATA.push(p.new); } else if (p.eventType === 'UPDATE') { const i = EV_DATA.findIndex(x => String(x.id) === String(p.new.id)); if (i >= 0) EV_DATA[i] = p.new; else EV_DATA.push(p.new) } else if (p.eventType === 'DELETE') EV_DATA = EV_DATA.filter(x => String(x.id) !== String(p.old.id)); refreshLiveView() })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, p => { if (p.eventType === 'INSERT') { if (!RG_DATA.find(x => String(x.id) === String(p.new.id))) RG_DATA.push(p.new); } else if (p.eventType === 'UPDATE') { const i = RG_DATA.findIndex(x => String(x.id) === String(p.new.id)); if (i >= 0) RG_DATA[i] = p.new; else RG_DATA.push(p.new) } else if (p.eventType === 'DELETE') RG_DATA = RG_DATA.filter(x => String(x.id) !== String(p.old.id)); refreshLiveView() })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'students' }, p => { if (p.eventType === 'INSERT') { if (!SL_DATA.find(x => String(x.sid) === String(p.new.sid))) SL_DATA.push(p.new); } else if (p.eventType === 'UPDATE') { const i = SL_DATA.findIndex(x => String(x.sid) === String(p.new.sid)); if (i >= 0) SL_DATA[i] = p.new; else SL_DATA.push(p.new) } else if (p.eventType === 'DELETE') SL_DATA = SL_DATA.filter(x => String(x.sid) !== String(p.old.sid)); refreshLiveView() })
         .subscribe(status => console.log('Supabase Realtime:', status));
     }
     function refreshLiveView() { if (!document.hidden && typeof cur !== 'undefined' && cur) { try { show(cur) } catch (e) { console.warn('Live UI refresh skipped:', e) } } }
