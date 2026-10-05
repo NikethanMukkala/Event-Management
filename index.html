@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Event Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand text-white fw-semibold" href="#" onclick="show('home');return false"><span
+          class="logo">CSE</span>College Event Management System</a>
+      <button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#nv"><span
+          class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="nv">
+        <ul class="navbar-nav ms-auto align-items-lg-center" id="navL"></ul>
+      </div>
+    </div>
+  </nav>
+  <div class="toast-container" id="tc"></div>
+
+  <!-- HOME -->
+  <section class="view" id="v-home">
+    <div class="hero">
+      <div class="container">
+        <h1 class="display-3 fw-bold">Connect. Participate. Celebrate.</h1>
+        <p class="lead my-4">One smart platform to discover, register, and manage every college event.</p>
+        <button class="btn btn-a btn-lg me-2" onclick="show('events')"><i class="bi bi-calendar-event"></i> Explore
+          Events</button>
+        <button class="btn btn-outline-light btn-lg" onclick="show('register')"><i class="bi bi-person-plus"></i>
+          Register Now</button>
+      </div>
+    </div>
+    <div class="container py-5">
+      <div class="row g-3 text-center">
+        <div class="col-6 col-md-3">
+          <div class="box">
+            <h2 class="ttl" id="stat-ev">â€”</h2>Events
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="box">
+            <h2 class="ttl" id="stat-st">â€”</h2>Students
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="box">
+            <h2 class="ttl" id="stat-rg">â€”</h2>Registrations
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="box">
+            <h2 class="ttl" id="stat-dp">â€”</h2>Departments
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container pb-5">
+      <h2 class="ttl text-center">Featured Events</h2>
+      <div class="ln"></div>
+      <div class="row g-4" id="feat"></div>
+    </div>
+    <div class="container pb-5">
+      <h2 class="ttl text-center">Why Choose Us</h2>
+      <div class="ln"></div>
+      <div class="row g-4 text-center">
+        <div class="col-md-3">
+          <div class="box why h-100"><i class="bi bi-pencil-square fs-1 text-primary"></i>
+            <h5>Easy Registration</h5>
+            <p class="small">Register for any event in a few clicks.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="box why h-100"><i class="bi bi-broadcast fs-1 text-primary"></i>
+            <h5>Real-Time Updates</h5>
+            <p class="small">Seats and event details update instantly.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="box why h-100"><i class="bi bi-speedometer2 fs-1 text-primary"></i>
+            <h5>Student Dashboard</h5>
+            <p class="small">Track all your registrations in one place.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="box why h-100"><i class="bi bi-shield-check fs-1 text-primary"></i>
+            <h5>Smart Administration</h5>
+            <p class="small">Admins manage events, students and reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-body py-5" id="about">
+      <div class="container text-center">
+        <h2 class="ttl">About Us</h2>
+        <div class="ln"></div>
+        <p class="mx-auto" style="max-width:780px">The College Event Management System is a web platform where students
+          discover college events, register online and receive a unique Registration ID. Administrators create and
+          manage events, monitor registrations and view reports, replacing paper forms with a fast and organised digital
+          process.</p>
+      </div>
+    </div>
+    <div class="container py-5" id="contact">
+      <h2 class="ttl text-center">Contact Us</h2>
+      <div class="ln"></div>
+      <div class="row g-4 align-items-center">
+        <div class="col-md-5">
+          <p><i class="bi bi-geo-alt text-primary me-2"></i>Narayana Engineering College Nellore,Andhra Pradesh</p>
+          <p><i class="bi bi-envelope text-primary me-2"></i>BG.14@contact.com</p>
+          <p><i class="bi bi-telephone text-primary me-2"></i>+91 9998887770</p>
+        </div>
+        <div class="col-md-7">
+          <form class="box" onsubmit="contact(event)"><input id="cn" class="form-control mb-3" placeholder="Your name"
+              required><input id="cm" type="email" class="form-control mb-3" placeholder="Your email" required><textarea
+              class="form-control mb-3" rows="3" placeholder="Message" required></textarea><button
+              class="btn btn-a">Send Message</button></form>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="container"><span class="logo">CSE</span>College Event Management System<p class="small mb-0 mt-2">
+          &copy; 2026 Narayana Engineering College | B.Tech CSE Mini Project</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="view d-none" id="v-events">
+    <div class="container py-5">
+      <h2 class="ttl text-center">College Events</h2>
+      <div class="ln"></div>
+      <div class="row g-2 mb-4">
+        <div class="col-md-4"><input id="q" class="form-control" placeholder="Search events..."
+            oninput="renderEvents()"></div>
+        <div class="col-6 col-md-2"><select id="fc" class="form-select" onchange="renderEvents()"></select></div>
+        <div class="col-6 col-md-3"><input id="fd" type="date" class="form-control" title="On or after this date"
+            onchange="renderEvents()"></div>
+        <div class="col-md-3"><select id="so" class="form-select" onchange="renderEvents()">
+            <option value="da">Date: Earliest first</option>
+            <option value="dd">Date: Latest first</option>
+            <option value="name">Name: A to Z</option>
+            <option value="pop">Most popular</option>
+          </select></div>
+      </div>
+      <div class="row g-4" id="evList"></div>
+    </div>
+  </section>
+
+  <!-- STUDENT REGISTRATION -->
+  <section class="view d-none citrus-bg" id="v-register">
+    <div class="container py-5 w-100" style="max-width:760px">
+      <form class="glass-box" onsubmit="regStudent(event)">
+        <h3 class="ttl text-center mb-4"><i class="bi bi-person-plus"></i> Student Registration</h3>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Full Name</label><input id="rn" autocomplete="name"
+              class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Student ID</label><input id="ri" class="form-control"
+              required></div>
+          <div class="col-md-4"><label class="form-label">Department</label><select id="rd" class="form-select"
+              required></select></div>
+          <div class="col-md-4"><label class="form-label">Year</label><select id="ry" class="form-select"
+              required></select></div>
+          <div class="col-md-4"><label class="form-label">Section</label><select id="rs" class="form-select"
+              required></select></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input id="re" type="email" autocomplete="email"
+              class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Phone Number</label><input id="rp" type="tel"
+              inputmode="numeric" autocomplete="tel" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Password (min 6)</label><input id="rw" type="password"
+              class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Confirm Password</label><input id="rw2" type="password"
+              class="form-control" required></div>
+        </div>
+        <button id="regBtn" class="btn btn-a w-100 mt-4">Create Student Account</button>
+        <p class="text-center mt-3 mb-1">Already have an account? <a href="#"
+            onclick="show('login');return false">Login</a></p>
+        <p class="text-center small text-muted mb-0">Demo helper: <a href="#"
+            onclick="resetData(false);return false">clear demo data</a> to register Rahul Kumar yourself.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- STUDENT LOGIN -->
+  <section class="view d-none citrus-bg" id="v-login">
+    <div class="container py-5 w-100" style="max-width:450px">
+      <form class="glass-box" onsubmit="loginS(event)">
+        <h3 class="ttl text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Student Login</h3>
+        <label class="form-label">Email</label><input id="le" type="email" class="form-control mb-3" required>
+        <label class="form-label">Password</label>
+        <div class="input-group mb-3">
+          <input id="lp" type="password" autocomplete="current-password" class="form-control" required>
+          <button type="button" class="btn btn-outline-light" onclick="togglePwd('lp',this)"><i
+              class="bi bi-eye"></i></button>
+        </div>
+        <button id="loginSBtn" class="btn btn-a w-100">Login</button>
+        <p class="text-center mt-3 mb-0">New student? <a href="#" onclick="show('register');return false">Register
+            here</a></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ADMIN LOGIN -->
+  <section class="view d-none citrus-bg" id="v-adminlogin">
+    <div class="container py-5 w-100" style="max-width:450px">
+      <form class="glass-box" onsubmit="loginA(event)">
+        <h3 class="ttl text-center mb-4"><i class="bi bi-shield-lock"></i> Admin Login</h3>
+        <div class="alert alert-warning small"><i class="bi bi-exclamation-triangle me-1"></i>Demo credentials: username
+          <b>admin</b>, password <b>admin123</b>. Not for production use.
+        </div>
+        <label class="form-label">Username</label><input id="au" class="form-control mb-3" required>
+        <label class="form-label">Password</label>
+        <div class="input-group mb-3">
+          <input id="ap" type="password" class="form-control" required>
+          <button type="button" class="btn btn-outline-light" onclick="togglePwd('ap',this)"><i
+              class="bi bi-eye"></i></button>
+        </div>
+        <button id="loginABtn" class="btn btn-a w-100">Login as Admin</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- EVENT REGISTRATION FORM (built by JS) -->
+  <section class="view d-none" id="v-regform"></section>
+
+  <!-- STUDENT AREA -->
+  <section class="view d-none" id="v-student">
+    <div class="lay">
+      <aside class="side" id="sideS"></aside>
+      <main>
+        <div class="panel d-none" id="p-sdash"></div>
+        <div class="panel d-none" id="p-smy"></div>
+        <div class="panel d-none" id="p-sprof"></div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ADMIN AREA -->
+  <section class="view d-none" id="v-admin">
+    <div class="lay">
+      <aside class="side" id="sideA"></aside>
+      <main>
+        <div class="panel d-none" id="p-adash"></div>
+        <div class="panel d-none" id="p-aev">
+          <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+            <h3 class="ttl m-0">Manage Events</h3><button class="btn btn-a" onclick="openEv()"><i
+                class="bi bi-plus-lg"></i> Add Event</button>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-8"><input id="aq" class="form-control" placeholder="Search events..." oninput="rAev()">
+            </div>
+            <div class="col-md-4"><select id="ac" class="form-select" onchange="rAev()"></select></div>
+          </div>
+          <div class="box" id="aevT"></div>
+        </div>
+        <div class="panel d-none" id="p-areg">
+          <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+            <h3 class="ttl m-0">Registrations</h3><button class="btn btn-success" onclick="csv()"><i
+                class="bi bi-download"></i> Export CSV</button>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-8"><input id="gq" class="form-control" placeholder="Search by ID, student or event..."
+                oninput="rAreg()"></div>
+            <div class="col-md-4"><select id="ge" class="form-select" onchange="rAreg()"></select></div>
+          </div>
+          <div class="box" id="aregT"></div>
+        </div>
+        <div class="panel d-none" id="p-astu">
+          <h3 class="ttl mb-3">Students</h3><input id="sq" class="form-control mb-3" placeholder="Search students..."
+            oninput="rAstu()">
+          <div class="box" id="astuT"></div>
+        </div>
+        <div class="panel d-none" id="p-arep">
+          <h3 class="ttl mb-3">Reports</h3>
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <div class="box">
+                <h5>Registrations by Event</h5>
+                <div id="c1"></div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="box">
+                <h5>Events by Category</h5>
+                <div id="c2"></div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="box">
+                <h5>Students by Department</h5>
+                <div id="c3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel d-none" id="p-aset">
+          <h3 class="ttl mb-3">Settings</h3>
+          <div class="box">
+            <p><b>Theme:</b> <button class="btn btn-outline-primary btn-sm" onclick="theme()">Toggle Dark /
+                Light</button></p>
+            <p><b>Admin account:</b> admin / admin123 (demo only)</p>
+            <p><b>Data:</b> <button class="btn btn-outline-danger btn-sm" onclick="askReset()">Reset all demo
+                data</button></p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- GENERIC MODAL -->
+  <div class="modal fade" id="m" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mT"></h5><button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="mB"></div>
+        <div class="modal-footer" id="mF"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT FORM MODAL -->
+  <div class="modal fade" id="evM" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <form class="modal-content" onsubmit="saveEv(event)">
+        <div class="modal-header">
+          <h5 class="modal-title" id="evT">Add Event</h5><button type="button" class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body"><input type="hidden" id="ef-id">
+          <div class="row g-3">
+            <div class="col-md-8"><label class="form-label">Event Name</label><input id="ef-n" class="form-control"
+                required></div>
+            <div class="col-md-4"><label class="form-label">Category</label><select id="ef-c"
+                class="form-select"></select></div>
+            <div class="col-md-4"><label class="form-label">Date</label><input id="ef-d" type="date"
+                class="form-control" required></div>
+            <div class="col-md-4"><label class="form-label">Time</label><input id="ef-t" type="time"
+                class="form-control" required></div>
+            <div class="col-md-4"><label class="form-label">Max Participants</label><input id="ef-x" type="number"
+                min="1" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Venue</label><input id="ef-v" class="form-control" required>
+            </div>
+            <div class="col-md-6"><label class="form-label">Organizer</label><input id="ef-o" class="form-control"
+                required></div>
+            <div class="col-12"><label class="form-label">Image URL (optional)</label><input id="ef-i"
+                class="form-control" placeholder="https://..."></div>
+            <div class="col-12"><label class="form-label">Description</label><textarea id="ef-ds" rows="3"
+                class="form-control" required></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary"
+            data-bs-dismiss="modal">Cancel</button><button class="btn btn-a">Save Event</button></div>
+      </form>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
