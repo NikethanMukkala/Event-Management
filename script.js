@@ -164,7 +164,7 @@
       const status = evStatus(e);
       const past = e.date < today(), full = e.count >= e.max, pct = Math.min(100, Math.round(e.count / e.max * 100));
       const btn = past ? '<button class="btn btn-secondary flex-fill" disabled>COMPLETED</button>' : full ? '<button class="btn btn-danger flex-fill" disabled>EVENT FULL</button>' : `<button class="btn btn-a flex-fill" onclick="startReg(${e.id})">Register Now</button>`;
-      return `<div class="${cols}"><div class="ec h-100 d-flex flex-column"><img src="${esc(e.img || sv(e.cat))}" onerror="this.onerror=null;this.src=sv('${e.cat}')" alt="">
+      return `<div class="${cols}"><div class="ec h-100 d-flex flex-column"><img src="${esc(e.img || sv(e.cat))}" class="w-100" style="aspect-ratio:16/9;object-fit:cover;background:#f8f9fa;" onerror="this.onerror=null;this.src=sv('${e.cat}')" alt="">
  <div class="p-3 d-flex flex-column flex-grow-1">
   <div class="d-flex justify-content-between align-items-center mb-2">
    <span class="badge bg-primary">${esc(e.cat)}</span>
@@ -292,7 +292,7 @@
         if (!/^[6-9]\d{9}$/.test(ph)) throw new Error('Enter a valid 10-digit phone number.');
         if (!$('ft').checked) throw new Error('Please agree to the event terms.');
         const n = Math.max(124, ...rg.map(r => +r.id.slice(-5))) + 1;
-        const r = { id: 'CES-2026-' + String(n).padStart(5, '0'), sid: s.sid, name, dept: $('fd2').value, year: $('fy').value, section: $('fs').value, email: s.email, phone: ph, eid: e.id, type: $('fpt').value, team: $('ftn').value.trim(), req: $('fr').value.trim(), date: today(), status: 'CONFIRMED' };
+        const r = { id: 'CSE-2026-' + String(n).padStart(5, '0'), sid: s.sid, name, dept: $('fd2').value, year: $('fy').value, section: $('fs').value, email: s.email, phone: ph, eid: e.id, type: $('fpt').value, team: $('ftn').value.trim(), req: $('fr').value.trim(), date: today(), status: 'CONFIRMED' };
         if (_supabase) {
           const { error } = await _supabase.from('registrations').insert([r]);
           if (error) throw new Error('DB Error: ' + error.message);
@@ -384,29 +384,52 @@
       $('ef-x').value = e ? e.max : ''; $('ef-v').value = e ? e.venue : ''; $('ef-o').value = e ? e.org : ''; $('ef-i').value = e ? e.img : ''; $('ef-ds').value = e ? e.desc : '';
       bootstrap.Modal.getOrCreateInstance($('evM')).show();
     }
+    function _doSaveEv(d, id, e) {
+      return new Promise(async resolve => {
+        if (id) {
+          if (d.max < e.count) return resolve(toast('Max participants cannot be less than current registrations (' + e.count + ').', 'danger'));
+          if (_supabase) { const { error } = await _supabase.from('events').update(d).eq('id', id); if (error) return resolve(toast('Error: ' + error.message, 'danger')); }
+          Object.assign(e, d); toast('Event updated successfully.');
+        } else {
+          d.count = 0;
+          if (_supabase) { 
+            const { data, error } = await _supabase.from('events').insert([d]).select(); 
+            if (error) return resolve(toast('Error: ' + error.message, 'danger')); 
+            d.id = data[0].id;
+          } else {
+            d.id = Date.now();
+          }
+          if (!EV_DATA.find(x => String(x.id) === String(d.id))) EV_DATA.push(d);
+          toast('Event added successfully.');
+        }
+        hide('evM'); show(AP.includes(cur) ? cur : 'aev');
+        resolve();
+      });
+    }
+
     async function saveEv(ev) {
       ev.preventDefault();
-      const d = { name: $('ef-n').value.trim(), cat: $('ef-c').value, date: $('ef-d').value, time: $('ef-t').value, max: +$('ef-x').value, venue: $('ef-v').value.trim(), org: $('ef-o').value.trim(), img: $('ef-i').value.trim(), desc: $('ef-ds').value.trim() };
-      if (!d.name || !d.date || !d.time || !d.venue || !d.org || !d.desc || d.max < 1) return toast('Please fill all fields correctly.', 'danger');
+      const name = $('ef-n').value.trim(), cat = $('ef-c').value, date = $('ef-d').value, time = $('ef-t').value, max = +$('ef-x').value, venue = $('ef-v').value.trim(), org = $('ef-o').value.trim(), desc = $('ef-ds').value.trim();
+      if (!name || !date || !time || !venue || !org || !desc || max < 1) return toast('Please fill all fields correctly.', 'danger');
       const id = +$('ef-id').value;
-      if (id) {
-        const e = EV().find(x => x.id == id);
-        if (d.max < e.count) return toast('Max participants cannot be less than current registrations (' + e.count + ').', 'danger');
-        if (_supabase) { const { error } = await _supabase.from('events').update(d).eq('id', id); if (error) return toast('Error: ' + error.message, 'danger'); }
-        Object.assign(e, d); toast('Event updated successfully.');
+      const e = id ? EV().find(x => x.id == id) : null;
+      let img = $('ef-i').value.trim();
+      const fileInput = $('ef-file');
+      
+      const d = { name, cat, date, time, max, venue, org, desc };
+
+      if (fileInput && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = async function(evt) {
+          d.img = evt.target.result;
+          await _doSaveEv(d, id, e);
+        };
+        reader.readAsDataURL(file);
       } else {
-        d.count = 0;
-        if (_supabase) { 
-          const { data, error } = await _supabase.from('events').insert([d]).select(); 
-          if (error) return toast('Error: ' + error.message, 'danger'); 
-          d.id = data[0].id;
-        } else {
-          d.id = Date.now();
-        }
-        if (!EV_DATA.find(x => String(x.id) === String(d.id))) EV_DATA.push(d);
-        toast('Event added successfully.');
+        d.img = img;
+        await _doSaveEv(d, id, e);
       }
-      hide('evM'); show(AP.includes(cur) ? cur : 'aev');
     }
     // Fix #19: More explicit delete confirmation
     function askDelEv(id) {
