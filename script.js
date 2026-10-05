@@ -339,7 +339,7 @@
       const completed = my.filter(r => { const e = ev.find(x => x.id == r.eid); return e && e.date < t; });
       const hr = new Date().getHours();
       const greet = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
-      $('p-sdash').innerHTML = `<h3 class="ttl mb-1">${greet}, ${esc(s.name)}! ðŸ‘‹</h3><p class="text-muted mb-4">Here's what's happening with your events.</p><div class="row g-3 mb-4">
+      $('p-sdash').innerHTML = `<h3 class="ttl mb-1">${greet}, ${esc(s.name)}! 👋</h3><p class="text-muted mb-4">Here's what's happening with your events.</p><div class="row g-3 mb-4">
  <div class="col-6 col-lg-3"><div class="stat bg-primary"><small>My Registrations</small><h2>${my.length}</h2></div></div>
  <div class="col-6 col-lg-3"><div class="stat bg-success"><small>Upcoming</small><h2>${upcoming.length}</h2></div></div>
  <div class="col-6 col-lg-3"><div class="stat" style="background:#f59e0b"><small>Completed</small><h2>${completed.length}</h2></div></div>
@@ -395,9 +395,16 @@
         if (_supabase) { const { error } = await _supabase.from('events').update(d).eq('id', id); if (error) return toast('Error: ' + error.message, 'danger'); }
         Object.assign(e, d); toast('Event updated successfully.');
       } else {
-        d.id = Date.now(); d.count = 0;
-        if (_supabase) { const { error } = await _supabase.from('events').insert([d]); if (error) return toast('Error: ' + error.message, 'danger'); }
-        EV_DATA.push(d); toast('Event added successfully.');
+        d.count = 0;
+        if (_supabase) { 
+          const { data, error } = await _supabase.from('events').insert([d]).select(); 
+          if (error) return toast('Error: ' + error.message, 'danger'); 
+          d.id = data[0].id;
+        } else {
+          d.id = Date.now();
+        }
+        if (!EV_DATA.find(x => String(x.id) === String(d.id))) EV_DATA.push(d);
+        toast('Event added successfully.');
       }
       hide('evM'); show(AP.includes(cur) ? cur : 'aev');
     }
